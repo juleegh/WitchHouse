@@ -16,7 +16,7 @@ public class Door : Item
     {
         if (CanBeOpened())
         {
-            base.DoContextualAction();
+            ToggleHighlight(false);
             Toggle();
         }
     }

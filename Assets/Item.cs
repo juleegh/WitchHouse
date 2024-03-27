@@ -5,8 +5,11 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     [SerializeField] private string descriptiveName;
+    [SerializeField] private string gameId;
+
     private List<Material> highlightMats;
     public string DescriptiveName { get { return descriptiveName; } }
+    public string GameId { get { return gameId; } }
     
     void Start()
     {
@@ -43,7 +46,8 @@ public class Item : MonoBehaviour
 
     public virtual void DoContextualAction()
     {
-        ToggleHighlight(false);
+        Inventory.Instance.Add(this);
+        gameObject.SetActive(false);
     }
 
 
