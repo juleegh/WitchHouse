@@ -5,30 +5,50 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     [SerializeField] private string descriptiveName;
-    private Material highlightMat;
+    private List<Material> highlightMats;
     public string DescriptiveName { get { return descriptiveName; } }
-    // Start is called before the first frame update
+    
     void Start()
     {
-        highlightMat = GetComponent<MeshRenderer>().material;
+        highlightMats = new List<Material>();
+        MeshRenderer[] rends = GetComponentsInChildren<MeshRenderer>();
+        foreach (MeshRenderer rend in rends)
+        {
+            highlightMats.Add(rend.material);
+        }
+        if (GetComponent<MeshRenderer>() != null)
+        {
+            highlightMats.Add(GetComponent<MeshRenderer>().material);
+        }
         ToggleHighlight(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void ToggleHighlight(bool visible)
     {
         if (visible)
         {
-            highlightMat.SetFloat("_Alpha", 1);
+            foreach (Material highlightMat in highlightMats)
+            {
+                highlightMat.SetFloat("_Alpha", 1);
+            }
         }
         else
         {
-            highlightMat.SetFloat("_Alpha", 0);
+            foreach (Material highlightMat in highlightMats)
+            {
+                highlightMat.SetFloat("_Alpha", 0);
+            }
         }
+    }
+
+    public virtual void DoContextualAction()
+    {
+        ToggleHighlight(false);
+    }
+
+
+    public virtual bool CanGoThrough()
+    {
+        return true;
     }
 }

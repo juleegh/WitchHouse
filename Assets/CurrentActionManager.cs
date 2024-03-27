@@ -23,6 +23,13 @@ public class CurrentActionManager : MonoBehaviour
             }
             GoToNextItem();
         }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (currentItems.Count > 0)
+            {
+                CurrentItem.DoContextualAction();
+            }
+        }
     }
 
     public void ResetAvailableActions()

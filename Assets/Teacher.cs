@@ -20,26 +20,14 @@ public class Teacher : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            Walk(Vector3.forward);
+            Walk(transform.forward);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-        {
-            Walk(-Vector3.forward);
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-        {
-            Walk(-Vector3.right);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-        {
-            Walk(Vector3.right);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
+        
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             Rotate(-Vector3.up);
         }
-        else if (Input.GetKeyDown(KeyCode.E))
+        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             Rotate(Vector3.up);
         }
@@ -50,12 +38,18 @@ public class Teacher : MonoBehaviour
     {
         Vector3 nextPosition = transform.position + Direction;
         Debug.Log(Direction);
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.position, Direction, out hit, 1f))
+        
+        RaycastHit[] hits = Physics.BoxCastAll(transform.position + Direction, Vector3.one * 0.5f, Vector3.down);
+        foreach (RaycastHit hit in hits)
         {
+            Item item = hit.collider.GetComponent<Item>();
+            if (item != null && item.CanGoThrough())
+            {
+                continue;
+            }
             return;
         }
+
         currentAction.ResetAvailableActions();
         transform.position = nextPosition;
         ActionPointsManager.Instance.ElapseActionPoint();
