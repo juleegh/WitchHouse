@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Teacher : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private CurrentActionManager currentAction;
+    
     void Start()
     {
-        
+        currentAction = GetComponent<CurrentActionManager>();    
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (ActionPointsManager.ExecutionInProgress())
@@ -56,12 +56,14 @@ public class Teacher : MonoBehaviour
         {
             return;
         }
+        currentAction.ResetAvailableActions();
         transform.position = nextPosition;
         ActionPointsManager.Instance.ElapseActionPoint();
     }
 
     private void Rotate(Vector3 Direction)
     {
+        currentAction.ResetAvailableActions();
         transform.eulerAngles += Direction * 90;
     }
 }
