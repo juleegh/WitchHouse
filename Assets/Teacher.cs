@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Teacher : MonoBehaviour
+public class Teacher : Character, Human
 {
     private CurrentActionManager currentAction;
+    private int health = 5;
     
     void Start()
     {
@@ -20,44 +21,37 @@ public class Teacher : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            Walk(transform.forward);
+            if (Walk(transform.forward))
+            { 
+                currentAction.ResetAvailableActions();
+                ActionPointsManager.Instance.ElapseActionPoint();
+            }
         }
         
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
-            Rotate(-Vector3.up);
+            Rotate(transform.eulerAngles - Vector3.up * 90);
+            currentAction.ResetAvailableActions();
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            Rotate(Vector3.up);
+            Rotate(transform.eulerAngles + Vector3.up * 90);
+            currentAction.ResetAvailableActions();
         }
-
-    }
-
-    private void Walk(Vector3 Direction)
-    {
-        Vector3 nextPosition = transform.position + Direction;
-        Debug.Log(Direction);
-        
-        RaycastHit[] hits = Physics.BoxCastAll(transform.position + Direction, Vector3.one * 0.5f, Vector3.down);
-        foreach (RaycastHit hit in hits)
+        else if (Input.GetKeyDown(KeyCode.Space))
         {
-            Item item = hit.collider.GetComponent<Item>();
-            if (item != null && item.CanGoThrough())
-            {
-                continue;
-            }
-            return;
+            ActionPointsManager.Instance.ElapseActionPoint();
         }
-
-        currentAction.ResetAvailableActions();
-        transform.position = nextPosition;
-        ActionPointsManager.Instance.ElapseActionPoint();
     }
 
-    private void Rotate(Vector3 Direction)
+    public Vector3 GetPosition()
     {
-        currentAction.ResetAvailableActions();
-        transform.eulerAngles += Direction * 90;
+        return transform.position;
+    }
+
+    public void TakeDamage(int quantity)
+    {
+        health--;
+        Debug.LogError("ouch");
     }
 }
